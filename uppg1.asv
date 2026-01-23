@@ -90,3 +90,6 @@ function vals = FEM(a,f,g,nNodes,twoPoints)
     LTilde(nNodes)=LTilde(nNodes)+g;
     vals = ATilde \ LTilde;
 end
+
+%%
+function 
