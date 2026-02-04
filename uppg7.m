@@ -1,7 +1,6 @@
-
 eps = 0.1;
-n = 10;
-delta = 0.0044;
+n = 200;
+delta = 0.0045;
 
 h = (1-eps)/n;
 ATilde = sparse(n+1,n+1);
@@ -33,12 +32,12 @@ steps = zeros(1,m);
 errors = zeros(1,m);
 
 for i = 1:m
-d = delta*2^(-i);
-[u, step, error] = GradientDescent(n, zeros(n-1, 1), d, ATilde, 1e-4, 2500000, truesol');
-u = [1; u ; 0];
-ds(i) = d;
-steps(i) = step;
-errors(i) = error;
+    d = delta*2^(-i);
+    [u, step, error] = GradientDescent(n, zeros(n-1, 1), d, ATilde, 1e-2, 2500000, truesol');
+    u = [1; u ; 0];
+    ds(i) = d;
+    steps(i) = step;
+    errors(i) = error;
 end
 A = [ds; steps; errors]
 array2table(A)
