@@ -3,7 +3,7 @@ f = @(x) exp(x);
 g = 1;
 n = 20;
 
-X = linspace(0,1,n);
+X = linspace(0,1,n+1);
 figure(1);
 sol = FEM(a,f,g,n,true);
 plot(X,sol);
@@ -16,11 +16,11 @@ ns = zeros(maxm-minm,1);
 for i = minm:maxm-1
     n = 2^(i);
     ns(i-minm+1)=n;
-    tmp = FEM(a,f,g,n,false)';
+    tmp = FEM(a,f,g,n,false)'; %change to two
     diffs(i-minm+1, :) = tmp(n/nodes:n/nodes:n);
 end
 n=2^16;
-tmp = FEM(a,f,g,n,false)';
+tmp = FEM(a,f,g,n,false)'; %change to two
 for i = maxm-minm:-1:1
    diffs(i,:) = (diffs(i,:)-tmp(n/nodes:n/nodes:n)).^2;
    %diffs(i,:) = (diffs(i,:)-diffs(i-1,:)).^2;
@@ -79,14 +79,20 @@ function vals = FEM(a,f,g,nNodes,twoPoints)
     LTilde = zeros(nNodes,1);
     for i = 1:nNodes
                 tmp = @(x) f(x)*(1-abs(x-i*h)/h);
-    
+        if twoPoints
                 point1 = (i+i-1)/2*h - h/(2*sqrt(3));
                 point2 = (i+i-1)/2*h + h/(2*sqrt(3));
                 
                 point3 = (i+i+1)/2*h - h/(2*sqrt(3));
                 point4 = (i+i+1)/2*h + h/(2*sqrt(3));
                 LTilde(i) = h/2*(tmp(point1)+tmp(point2)) + h/2*(tmp(point3)+tmp(point4));
+        else
+            point1 = (i+1)*h/2;
+            point2 = (i-1)*h/2;
+
+            LTilde(i) = h*(tmp(point1)+tmp(point2));
+        end
     end
     LTilde(nNodes)=LTilde(nNodes)+g;
-    vals = ATilde \ LTilde;
+    vals = [0;ATilde \ LTilde];
 end
